@@ -6,45 +6,28 @@ import static shop.jtoon.type.ErrorStatus.*;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.dto.UploadImageDto;
 
-import shop.jtoon.exception.DuplicatedException;
 import shop.jtoon.exception.InvalidRequestException;
-import shop.jtoon.exception.NotFoundException;
-import shop.jtoon.member.application.MemberService;
-import shop.jtoon.member.entity.Member;
-import shop.jtoon.payment.application.MemberCookieService;
 
-import shop.jtoon.service.S3Service;
-import shop.jtoon.webtoon.entity.Episode;
-import shop.jtoon.webtoon.entity.PurchasedEpisode;
+import shop.jtoon.webtoon.domain.EpisodeMainInfo;
+import shop.jtoon.webtoon.domain.EpisodeSchema;
 import shop.jtoon.webtoon.entity.Webtoon;
-import shop.jtoon.webtoon.repository.EpisodeRepository;
-import shop.jtoon.webtoon.repository.EpisodeSearchRepository;
-import shop.jtoon.webtoon.repository.PurchasedEpisodeRepository;
 import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.GetEpisodesReq;
 import shop.jtoon.webtoon.response.EpisodeInfoRes;
 import shop.jtoon.webtoon.response.EpisodeItemRes;
+import shop.jtoon.webtoon.service.EpisodeDomainService;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class EpisodeService {
 
-	private final MemberService memberService;
-	private final MemberCookieService memberCookieService;
-	private final WebtoonService webtoonService;
-	private final S3Service s3Service;
-	private final EpisodeRepository episodeRepository;
-	private final EpisodeSearchRepository episodeSearchRepository;
-	private final PurchasedEpisodeRepository purchasedEpisodeRepository;
+	private final WebtoonClientService webtoonClientService;
+	private final EpisodeDomainService episodeDomainService;
 
-	@Transactional
 	public void createEpisode(
 		Long memberId,
 		Long webtoonId,
@@ -52,57 +35,35 @@ public class EpisodeService {
 		MultipartFile thumbnailImage,
 		CreateEpisodeReq request
 	) {
-		Webtoon webtoon = webtoonService.getWebtoonById(webtoonId);
-		webtoon.validateAuthor(memberId);
-		validateDuplicateNo(webtoon, request.no());
-		UploadImageDto uploadMainImageDto = request.toUploadImageDto(EPISODE_MAIN, webtoon.getTitle(), mainImage);
-		UploadImageDto uploadThumbnailImageDto = request.toUploadImageDto(
+		Webtoon webtoon = episodeDomainService.readWebtoon(webtoonId, memberId, request.no());
+		String mainUrl = webtoonClientService.upload(request.toUploadImageDto(EPISODE_MAIN, webtoon.getTitle(), mainImage));
+		String thumbnailUrl = webtoonClientService.upload(request.toUploadImageDto(
 			EPISODE_THUMBNAIL,
 			webtoon.getTitle(),
 			thumbnailImage
-		);
-		String mainUrl = s3Service.uploadImage(uploadMainImageDto);
-		String thumbnailUrl = s3Service.uploadImage(uploadThumbnailImageDto);
+		));
 
 		try {
-			Episode episode = request.toEntity(webtoon, mainUrl, thumbnailUrl);
-			episodeRepository.save(episode);
+			EpisodeSchema episode = request.toEpisodeSchema();
+			episodeDomainService.createEpisode(episode, webtoon, mainUrl, thumbnailUrl);
 		} catch (RuntimeException e) {
-			s3Service.deleteImage(mainUrl);
-			s3Service.deleteImage(thumbnailUrl);
+			webtoonClientService.deleteImage(mainUrl);
+			webtoonClientService.deleteImage(thumbnailUrl);
 			throw new InvalidRequestException(EPISODE_CREATE_FAIL);
 		}
 	}
 
 	public List<EpisodeItemRes> getEpisodes(Long webtoonId, GetEpisodesReq request) {
-		return episodeSearchRepository.getEpisodes(webtoonId, request.getSize(), request.getOffset())
-			.stream()
-			.map(EpisodeItemRes::from)
-			.toList();
+		return EpisodeItemRes.from(episodeDomainService.readEpisodes(webtoonId, request.getSize(), request.getOffset()));
 	}
 
 	public EpisodeInfoRes getEpisode(Long episodeId) {
-		Episode episode = getEpisodeById(episodeId);
+		EpisodeMainInfo episode = episodeDomainService.readEpisode(episodeId);
+
 		return EpisodeInfoRes.from(episode);
 	}
 
-	@Transactional
 	public void purchaseEpisode(Long memberId, Long episodeId) {
-		Member member = memberService.findById(memberId);
-		Episode episode = getEpisodeById(episodeId);
-		memberCookieService.useCookie(episode.getCookieCount(), member);
-		PurchasedEpisode purchasedEpisode = PurchasedEpisode.create(member, episode);
-		purchasedEpisodeRepository.save(purchasedEpisode);
-	}
-
-	private Episode getEpisodeById(Long episodeId) {
-		return episodeRepository.findById(episodeId)
-			.orElseThrow(() -> new NotFoundException(EPISODE_NOT_FOUND));
-	}
-
-	private void validateDuplicateNo(Webtoon webtoon, int no) {
-		if (episodeRepository.existsByWebtoonAndNo(webtoon, no)) {
-			throw new DuplicatedException(EPISODE_NUMBER_DUPLICATED);
-		}
+		episodeDomainService.purchaseEpisode(memberId, episodeId);
 	}
 }

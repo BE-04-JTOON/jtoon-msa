@@ -121,3 +121,8 @@ gradle-app.setting
 application-*.yml
 !application.yml
 !application-test.yml
+
+smtp.yml
+redis.yml
+db-main.yml
+logging.yml

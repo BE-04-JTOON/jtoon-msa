@@ -10,7 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.member.application.MemberService;
+import shop.jtoon.member.application.LoginService;
+import shop.jtoon.member.domain.MyInfo;
 import shop.jtoon.member.dto.MemberDto;
 import shop.jtoon.security.service.AuthenticationService;
 
@@ -18,11 +19,12 @@ import shop.jtoon.security.service.AuthenticationService;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-	private final MemberService memberService;
+	private final LoginService memberService;
 
 	@Override
 	public Authentication getAuthentication(String claimsEmail) {
-		MemberDto memberDto = memberService.findMemberDtoByEmail(claimsEmail);
+		MyInfo myInfo = memberService.readMyInfo(claimsEmail);
+		MemberDto memberDto = MemberDto.toDto(myInfo);
 
 		return new UsernamePasswordAuthenticationToken(memberDto, BLANK,
 			List.of(new SimpleGrantedAuthority(memberDto.role().toString())));

@@ -42,7 +42,7 @@ subprojects {
     }
 
     tasks.getByName("jar") {
-        enabled = false
+        enabled = true
     }
 }
 

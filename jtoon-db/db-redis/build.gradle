@@ -1,0 +1,7 @@
+dependencies {
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    compileOnly project(":jtoon-system")
+    compileOnly project(":jtoon-core:core-domain")
+}

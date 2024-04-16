@@ -9,6 +9,7 @@ pluginManagement {
 rootProject.name = 'jtoon'
 
 include 'jtoon-core:core-api'
+include 'jtoon-core:core-domain'
 
 include 'jtoon-support:logging'
 include 'jtoon-support:monitoring'
@@ -18,3 +19,6 @@ include 'jtoon-internal:core-web'
 include 'jtoon-internal:s3-client'
 include 'jtoon-internal:iamport-client'
 include 'jtoon-internal:smtp-client'
+
+include 'jtoon-db:db-redis'
+

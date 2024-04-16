@@ -11,11 +11,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import shop.jtoon.exception.DuplicatedException;
-import shop.jtoon.member.application.MemberService;
+import shop.jtoon.member.application.LoginService;
 import shop.jtoon.member.dto.OAuthAttributes;
 import shop.jtoon.member.entity.LoginType;
 import shop.jtoon.member.entity.Member;
@@ -23,11 +22,10 @@ import shop.jtoon.security.service.CustomOAuth2UserService;
 import shop.jtoon.type.ErrorStatus;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class OAuth2Service implements CustomOAuth2UserService {
 
-	private final MemberService memberService;
+	private final LoginService memberService;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

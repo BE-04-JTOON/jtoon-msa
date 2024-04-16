@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import shop.jtoon.login.domain.LoginInfo;
+import shop.jtoon.login.domain.UserInfo;
 import shop.jtoon.member.entity.Gender;
 import shop.jtoon.member.entity.LoginType;
-import shop.jtoon.member.entity.Member;
-import shop.jtoon.member.entity.Role;
 
 public record LocalSignUpReq(
 	@Pattern(regexp = EMAIL_PATTERN) String email,
@@ -20,16 +20,20 @@ public record LocalSignUpReq(
 	@Pattern(regexp = PHONE_PATTERN) String phone,
 	@NotNull String loginType
 ) {
-	public Member toEntity(String encryptedPassword) {
-		return Member.builder()
+	public LoginInfo toLoginInfo() {
+		return LoginInfo.builder()
 			.email(email)
-			.password(encryptedPassword)
+			.password(password)
+			.loginType(LoginType.from(loginType))
+			.build();
+	}
+
+	public UserInfo toUserInfo() {
+		return UserInfo.builder()
 			.name(name)
 			.nickname(nickname)
 			.gender(Gender.from(gender))
 			.phone(phone)
-			.role(Role.USER)
-			.loginType(LoginType.from(loginType))
 			.build();
 	}
 }

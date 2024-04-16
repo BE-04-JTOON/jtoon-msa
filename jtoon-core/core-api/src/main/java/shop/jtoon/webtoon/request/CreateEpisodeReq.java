@@ -12,6 +12,7 @@ import lombok.Builder;
 import shop.jtoon.common.FileName;
 import shop.jtoon.common.ImageType;
 import shop.jtoon.dto.UploadImageDto;
+import shop.jtoon.webtoon.domain.EpisodeSchema;
 import shop.jtoon.webtoon.entity.Episode;
 import shop.jtoon.webtoon.entity.Webtoon;
 
@@ -23,15 +24,12 @@ public record CreateEpisodeReq(
 	@NotNull LocalDateTime openedAt
 ) {
 
-	public Episode toEntity(Webtoon webtoon, String mainUrl, String thumbnailUrl) {
-		return Episode.builder()
+	public EpisodeSchema toEpisodeSchema() {
+		return EpisodeSchema.builder()
 			.no(no)
 			.title(title)
 			.hasComment(hasComment)
 			.openedAt(openedAt)
-			.mainUrl(mainUrl)
-			.thumbnailUrl(thumbnailUrl)
-			.webtoon(webtoon)
 			.build();
 	}
 

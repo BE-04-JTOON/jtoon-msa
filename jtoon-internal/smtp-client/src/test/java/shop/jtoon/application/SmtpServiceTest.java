@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import shop.jtoon.entity.Mail;
+import shop.jtoon.domain.Mail;
 
 @ExtendWith(MockitoExtension.class)
 class SmtpServiceTest {

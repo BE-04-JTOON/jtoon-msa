@@ -12,7 +12,9 @@ import lombok.Builder;
 import shop.jtoon.common.FileName;
 import shop.jtoon.common.ImageType;
 import shop.jtoon.dto.UploadImageDto;
-import shop.jtoon.member.entity.Member;
+import shop.jtoon.webtoon.domain.WebtoonDayOfWeeks;
+import shop.jtoon.webtoon.domain.WebtoonGenres;
+import shop.jtoon.webtoon.domain.WebtoonInfo;
 import shop.jtoon.webtoon.entity.DayOfWeekWebtoon;
 import shop.jtoon.webtoon.entity.GenreWebtoon;
 import shop.jtoon.webtoon.entity.Webtoon;
@@ -30,28 +32,24 @@ public record CreateWebtoonReq(
 	@Min(0) int cookieCount
 ) {
 
-	public Webtoon toWebtoonEntity(Member member, String thumbnailUrl) {
-		return Webtoon.builder()
+	public WebtoonInfo toWebtoonInfo(String thumbnailUrl) {
+		return WebtoonInfo.builder()
 			.title(title)
 			.description(description)
 			.ageLimit(ageLimit)
 			.thumbnailUrl(thumbnailUrl)
 			.cookieCount(cookieCount)
-			.author(member)
 			.build();
 	}
 
-	public List<DayOfWeekWebtoon> toDayOfWeekWebtoonEntity(Webtoon webtoon) {
-		return dayOfWeeks.stream()
-			.map(dayOfWeek -> DayOfWeekWebtoon.create(dayOfWeek, webtoon))
-			.toList();
+	public WebtoonGenres toWebtoonGenres() {
+		return WebtoonGenres.builder().genres(genres).build();
 	}
 
-	public List<GenreWebtoon> toGenreWebtoonEntity(Webtoon webtoon) {
-		return genres.stream()
-			.map(genre -> GenreWebtoon.create(genre, webtoon))
-			.toList();
+	public WebtoonDayOfWeeks toWebtoonDayOfWeeks() {
+		return WebtoonDayOfWeeks.builder().dayOfWeeks(dayOfWeeks).build();
 	}
+
 
 	public UploadImageDto toUploadImageDto(ImageType imageType, MultipartFile image) {
 		return UploadImageDto.builder()

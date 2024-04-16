@@ -3,7 +3,7 @@ package shop.jtoon.security.application;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.internal.service.RedisTokenService;
+import shop.jtoon.service.RedisTokenService;
 import shop.jtoon.security.service.RefreshTokenService;
 
 @Service

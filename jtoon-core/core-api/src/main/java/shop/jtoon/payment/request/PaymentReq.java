@@ -11,6 +11,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import shop.jtoon.member.entity.Member;
+import shop.jtoon.payment.domain.Buyer;
+import shop.jtoon.payment.domain.Item;
+import shop.jtoon.payment.domain.Pay;
 import shop.jtoon.payment.entity.CookieItem;
 import shop.jtoon.payment.entity.PaymentInfo;
 
@@ -35,5 +38,28 @@ public record PaymentReq(
                 .amount(this.amount)
                 .member(member)
                 .build();
+    }
+
+    public Pay toPay() {
+        return Pay.builder()
+            .impUid(impUid)
+            .merchantUid(merchantUid)
+            .payMethod(payMethod)
+            .build();
+    }
+
+    public Item toItem() {
+        return Item.builder()
+            .itemName(itemName)
+            .amount(amount)
+            .build();
+    }
+
+    public Buyer toBuyer() {
+        return Buyer.builder()
+            .buyerEmail(buyerEmail)
+            .buyerName(buyerName)
+            .buyerPhone(buyerPhone)
+            .build();
     }
 }

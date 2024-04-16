@@ -1,8 +1,10 @@
 package shop.jtoon.webtoon.response;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import lombok.Builder;
+import shop.jtoon.webtoon.domain.SearchEpisode;
 import shop.jtoon.webtoon.entity.Episode;
 
 @Builder
@@ -14,13 +16,19 @@ public record EpisodeItemRes(
 	String openedAt
 ) {
 
-	public static EpisodeItemRes from(Episode episode) {
+	public static EpisodeItemRes from(SearchEpisode episode) {
 		return EpisodeItemRes.builder()
-			.episodeId(episode.getId())
-			.no(episode.getNo())
-			.title(episode.getTitle())
-			.thumbnailUrl(episode.getThumbnailUrl())
-			.openedAt(episode.getOpenedAt().format(DateTimeFormatter.ofPattern("yy.MM.dd")))
+			.episodeId(episode.episodeId())
+			.no(episode.no())
+			.title(episode.title())
+			.thumbnailUrl(episode.thumbnailUrl())
+			.openedAt(episode.openedAt())
 			.build();
+	}
+
+	public static List<EpisodeItemRes> from(List<SearchEpisode> episodes) {
+		return episodes.stream()
+			.map(EpisodeItemRes::from)
+			.toList();
 	}
 }

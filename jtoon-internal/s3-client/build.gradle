@@ -1,6 +1,6 @@
 dependencies {
 
-    implementation project(':jtoon-system')
+    implementation project(":jtoon-system")
 
     // S3
     implementation 'org.springframework.boot:spring-boot-starter-web'

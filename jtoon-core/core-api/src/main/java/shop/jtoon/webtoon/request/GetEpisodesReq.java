@@ -7,4 +7,5 @@ import shop.jtoon.type.CustomPageRequest;
 @Getter
 @SuperBuilder
 public class GetEpisodesReq extends CustomPageRequest {
+
 }

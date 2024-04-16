@@ -2,6 +2,7 @@ package shop.jtoon.webtoon.response;
 
 import lombok.Builder;
 import shop.jtoon.member.entity.Member;
+import shop.jtoon.webtoon.domain.Author;
 
 @Builder
 public record AuthorRes(
@@ -9,10 +10,10 @@ public record AuthorRes(
 	String nickname
 ) {
 
-	public static AuthorRes from(Member author) {
+	public static AuthorRes from(Author author) {
 		return AuthorRes.builder()
-			.id(author.getId())
-			.nickname(author.getNickname())
+			.id(author.id())
+			.nickname(author.nickname())
 			.build();
 	}
 }
