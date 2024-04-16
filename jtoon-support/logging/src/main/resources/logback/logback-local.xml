@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <property name="LOGS_ABSOLUTE_PATH" value="./logs"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{HH:mm:ss.SSS}:%-3relative)|%clr(%-5level)|%clr(${PID:-}){magenta}|%clr(---){faint}|%clr([%15.15thread]){faint}|%clr(%-40.40logger{36}){cyan}|%clr(:){faint} : %msg%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="WARN" />
+    <logger name="org.example.multiex" level="DEBUG" />
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

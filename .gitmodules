@@ -1,0 +1,3 @@
+[submodule "jtoon-core/core-api/src/main/resources/config"]
+	path = jtoon-core/core-api/src/main/resources/config
+	url = https://github.com/BE-04-JTOON/private-env.git
