@@ -1,19 +1,24 @@
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "org.springframework.boot") useVersion(springBootVersion)
+            if (requested.id.id == "io.spring.dependency-management") useVersion(springDependencyManagementVersion)
+        }
+    }
+}
 rootProject.name = 'jtoon'
 
-include 'module-application'
-include 'module-application:app-api'
+include 'jtoon-core:core-api'
+include 'jtoon-core:core-domain'
 
-include 'module-domain'
-include 'module-domain:domain-member'
-include 'module-domain:domain-payment'
-include 'module-domain:domain-redis'
-include 'module-domain:domain-webtoon'
-include 'module-domain:domain-jpa'
+include 'jtoon-support:logging'
+include 'jtoon-support:monitoring'
 
-include 'module-internal'
-include 'module-internal:core-web'
-include 'module-internal:s3-client'
-include 'module-internal:iamport-client'
-include 'module-internal:smtp-client'
+include 'jtoon-system'
+include 'jtoon-internal:core-web'
+include 'jtoon-internal:s3-client'
+include 'jtoon-internal:iamport-client'
+include 'jtoon-internal:smtp-client'
 
-include 'module-core'
+include 'jtoon-db:db-redis'
+

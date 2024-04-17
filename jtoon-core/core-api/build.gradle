@@ -1,0 +1,48 @@
+tasks.getByName('bootJar') {
+    enabled = true
+}
+
+tasks.getByName("jar") {
+    enabled = false
+}
+
+dependencies {
+
+    implementation project(":jtoon-core:core-domain")
+
+    implementation project(":jtoon-internal:core-web")
+    implementation project(":jtoon-internal:iamport-client")
+    implementation project(":jtoon-internal:s3-client")
+    implementation project(":jtoon-internal:smtp-client")
+
+    implementation project(":jtoon-support:logging")
+    implementation project(":jtoon-support:monitoring")
+
+    implementation project(":jtoon-system")
+
+    implementation project(":jtoon-db:db-redis")
+
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Bean Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // OAuth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // RestDocs
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
