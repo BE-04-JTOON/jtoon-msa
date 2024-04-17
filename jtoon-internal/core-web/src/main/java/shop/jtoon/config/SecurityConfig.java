@@ -41,6 +41,8 @@ public class SecurityConfig {
 			.requestMatchers("/members/sign-up")
 			.requestMatchers("/members/email-authorization")
 			.requestMatchers("/members/local-login")
+			.requestMatchers("/")
+			.requestMatchers("/actuator/prometheus")
 			;
 	}
 

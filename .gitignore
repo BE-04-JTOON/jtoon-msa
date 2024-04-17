@@ -126,3 +126,6 @@ smtp.yml
 redis.yml
 db-main.yml
 logging.yml
+
+volume
+query_log_file.log
