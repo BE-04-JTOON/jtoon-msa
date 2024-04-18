@@ -1,16 +1,20 @@
 package shop.jtoon.webtoon.domain;
 
+import static shop.jtoon.util.WebtoonUitls.*;
+
+import java.util.List;
+
 import lombok.Builder;
 import shop.jtoon.webtoon.entity.Episode;
 
 @Builder
 public record EpisodeMainInfo(
-	String mainUrl
+	List<String> mainUrls
 ) {
 
 	public static EpisodeMainInfo of(Episode episode) {
 		return EpisodeMainInfo.builder()
-			.mainUrl(episode.getMainUrl())
+			.mainUrls(List.of(episode.getMainUrl().split(URL_SPLITER)))
 			.build();
 	}
 }

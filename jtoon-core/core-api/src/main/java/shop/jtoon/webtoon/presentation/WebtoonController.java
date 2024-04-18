@@ -24,6 +24,7 @@ import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.CreateWebtoonReq;
 import shop.jtoon.webtoon.request.GetEpisodesReq;
 import shop.jtoon.webtoon.request.GetWebtoonsReq;
+import shop.jtoon.webtoon.request.MultiImagesReq;
 import shop.jtoon.webtoon.response.EpisodeInfoRes;
 import shop.jtoon.webtoon.response.EpisodeItemRes;
 import shop.jtoon.webtoon.response.WebtoonInfoRes;
@@ -52,11 +53,11 @@ public class WebtoonController {
 	public void createEpisode(
 		@CurrentUser MemberDto member,
 		@PathVariable Long webtoonId,
-		@RequestPart MultipartFile mainImage,
+		@RequestPart MultiImagesReq multiImagesReq,
 		@RequestPart MultipartFile thumbnailImage,
 		@RequestPart @Valid CreateEpisodeReq request
 	) {
-		episodeService.createEpisode(member.id(), webtoonId, mainImage, thumbnailImage, request);
+		episodeService.createEpisode(member.id(), webtoonId, multiImagesReq, thumbnailImage, request);
 	}
 
 	@GetMapping

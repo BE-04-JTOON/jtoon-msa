@@ -39,9 +39,8 @@ public class EpisodeDomainService {
 		return webtoon;
 	}
 
-	public void createEpisode(EpisodeSchema episodeSchema,Webtoon webtoon, String mainUrl, String thumbnailUrl) {
-		Episode episode = episodeSchema.toEpisode(webtoon,mainUrl,thumbnailUrl);
-		episodeWriter.write(episode);
+	public void createEpisode(EpisodeSchema episodeSchema,Webtoon webtoon, List<String> mainUrl, String thumbnailUrl) {
+		webtoonManger.uploadEpisode(episodeSchema, webtoon,mainUrl,thumbnailUrl);
 	}
 
 	public EpisodeMainInfo readEpisode(Long episodeId) {

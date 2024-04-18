@@ -5,18 +5,23 @@ import static shop.jtoon.type.ErrorStatus.*;
 
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
+import shop.jtoon.dto.ImageUploadEvent;
+import shop.jtoon.dto.MultiImageEvent;
 import shop.jtoon.exception.InvalidRequestException;
 
 import shop.jtoon.webtoon.domain.EpisodeMainInfo;
 import shop.jtoon.webtoon.domain.EpisodeSchema;
 import shop.jtoon.webtoon.entity.Webtoon;
+import shop.jtoon.webtoon.presentation.WebtoonImageUploadEventListener;
 import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.GetEpisodesReq;
+import shop.jtoon.webtoon.request.MultiImagesReq;
 import shop.jtoon.webtoon.response.EpisodeInfoRes;
 import shop.jtoon.webtoon.response.EpisodeItemRes;
 import shop.jtoon.webtoon.service.EpisodeDomainService;
@@ -27,30 +32,36 @@ public class EpisodeService {
 
 	private final WebtoonClientService webtoonClientService;
 	private final EpisodeDomainService episodeDomainService;
+	private final ApplicationEventPublisher publisher;
 
 	public void createEpisode(
 		Long memberId,
 		Long webtoonId,
-		MultipartFile mainImage,
+		MultiImagesReq mainImages,
 		MultipartFile thumbnailImage,
 		CreateEpisodeReq request
 	) {
 		Webtoon webtoon = episodeDomainService.readWebtoon(webtoonId, memberId, request.no());
-		String mainUrl = webtoonClientService.upload(request.toUploadImageDto(EPISODE_MAIN, webtoon.getTitle(), mainImage));
-		String thumbnailUrl = webtoonClientService.upload(request.toUploadImageDto(
+
+		MultiImageEvent mainUploadEvents = MultiImageEvent.builder()
+			.imageUploadEvents(mainImages.toMultiImageEvent(request, webtoon.getTitle()))
+			.build();
+		List<String> mainUrls = mainUploadEvents.imageUploadEvents().stream()
+			.map(webtoonClientService::uploadUrl)
+			.toList();
+
+		ImageUploadEvent thumbnailUploadEvent = request.toUploadImageDto(
 			EPISODE_THUMBNAIL,
 			webtoon.getTitle(),
 			thumbnailImage
-		));
+		).toImageUploadEvent();
+		String thumbnailUrl = webtoonClientService.upload(thumbnailUploadEvent);
 
-		try {
-			EpisodeSchema episode = request.toEpisodeSchema();
-			episodeDomainService.createEpisode(episode, webtoon, mainUrl, thumbnailUrl);
-		} catch (RuntimeException e) {
-			webtoonClientService.deleteImage(mainUrl);
-			webtoonClientService.deleteImage(thumbnailUrl);
-			throw new InvalidRequestException(EPISODE_CREATE_FAIL);
-		}
+		EpisodeSchema episode = request.toEpisodeSchema();
+		episodeDomainService.createEpisode(episode, webtoon, mainUrls, thumbnailUrl);
+
+		publisher.publishEvent(mainUploadEvents);
+		publisher.publishEvent(thumbnailUploadEvent);
 	}
 
 	public List<EpisodeItemRes> getEpisodes(Long webtoonId, GetEpisodesReq request) {

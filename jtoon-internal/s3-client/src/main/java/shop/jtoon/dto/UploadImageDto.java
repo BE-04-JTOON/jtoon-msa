@@ -17,4 +17,11 @@ public record UploadImageDto(
 	public String toKey() {
 		return imageType.getPath(webtoonTitle, fileName.getValue());
 	}
+
+	public ImageUploadEvent toImageUploadEvent() {
+		return ImageUploadEvent.builder()
+			.key(toKey())
+			.multipartFile(image)
+			.build();
+	}
 }
