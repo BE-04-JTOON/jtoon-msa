@@ -27,6 +27,10 @@ public class S3Manager {
 	@Value("${spring.cloud.aws.cloud-front.url}")
 	private String CLOUD_FRONT_URL;
 
+	public String uploadUrl(String key) {
+		return CLOUD_FRONT_URL + key;
+	}
+
 	public String uploadImage(String key, MultipartFile file) {
 		try {
 			s3Template.upload(

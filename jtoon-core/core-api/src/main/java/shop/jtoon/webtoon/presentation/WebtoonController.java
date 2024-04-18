@@ -52,11 +52,11 @@ public class WebtoonController {
 	public void createEpisode(
 		@CurrentUser MemberDto member,
 		@PathVariable Long webtoonId,
-		@RequestPart MultipartFile mainImage,
+		@RequestPart List<MultipartFile> mainImages,
 		@RequestPart MultipartFile thumbnailImage,
 		@RequestPart @Valid CreateEpisodeReq request
 	) {
-		episodeService.createEpisode(member.id(), webtoonId, mainImage, thumbnailImage, request);
+		episodeService.createEpisode(member.id(), webtoonId, mainImages, thumbnailImage, request);
 	}
 
 	@GetMapping

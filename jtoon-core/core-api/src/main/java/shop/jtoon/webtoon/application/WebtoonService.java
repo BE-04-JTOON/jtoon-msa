@@ -6,10 +6,12 @@ import static shop.jtoon.type.ErrorStatus.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import shop.jtoon.dto.ImageUploadEvent;
 import shop.jtoon.dto.UploadImageDto;
 
 import shop.jtoon.exception.InvalidRequestException;
@@ -26,23 +28,21 @@ import shop.jtoon.webtoon.service.WebtoonDomainService;
 @RequiredArgsConstructor
 public class WebtoonService {
 
-
 	private final WebtoonClientService webtoonClientService;
 	private final WebtoonDomainService webtoonDomainService;
+	private final ApplicationEventPublisher publisher;
 
 	public void createWebtoon(Long memberId, MultipartFile thumbnailImage, CreateWebtoonReq request) {
+		ImageUploadEvent imageUploadEvent = request.toUploadImageDto(WEBTOON_THUMBNAIL, thumbnailImage)
+												.toImageUploadEvent();
+		String thumbnailUrl = webtoonClientService.uploadUrl(imageUploadEvent);
 		webtoonDomainService.validateDuplicateTitle(request.title());
-		String thumbnailUrl = webtoonClientService.upload(request.toUploadImageDto(WEBTOON_THUMBNAIL, thumbnailImage));
+		webtoonDomainService.createWebtoon(memberId,
+			request.toWebtoonInfo(thumbnailUrl),
+			request.toWebtoonGenres(),
+			request.toWebtoonDayOfWeeks());
 
-		try {
-			webtoonDomainService.createWebtoon(memberId,
-				request.toWebtoonInfo(thumbnailUrl),
-				request.toWebtoonGenres(),
-				request.toWebtoonDayOfWeeks());
-		} catch (RuntimeException e) {
-			webtoonClientService.deleteImage(thumbnailUrl);
-			throw new InvalidRequestException(WEBTOON_CREATE_FAIL);
-		}
+		publisher.publishEvent(imageUploadEvent);
 	}
 
 	public Map<DayOfWeek, List<WebtoonItemRes>> getWebtoons(GetWebtoonsReq request) {
