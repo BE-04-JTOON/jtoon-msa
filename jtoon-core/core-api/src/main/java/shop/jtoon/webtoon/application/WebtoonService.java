@@ -1,7 +1,6 @@
 package shop.jtoon.webtoon.application;
 
 import static shop.jtoon.common.ImageType.*;
-import static shop.jtoon.type.ErrorStatus.*;
 
 import java.util.List;
 import java.util.Map;
@@ -12,10 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import shop.jtoon.dto.ImageUploadEvent;
-import shop.jtoon.dto.UploadImageDto;
-
-import shop.jtoon.exception.InvalidRequestException;
-
 import shop.jtoon.webtoon.domain.WebtoonDetail;
 import shop.jtoon.webtoon.entity.enums.DayOfWeek;
 import shop.jtoon.webtoon.request.CreateWebtoonReq;
@@ -34,8 +29,9 @@ public class WebtoonService {
 
 	public void createWebtoon(Long memberId, MultipartFile thumbnailImage, CreateWebtoonReq request) {
 		ImageUploadEvent imageUploadEvent = request.toUploadImageDto(WEBTOON_THUMBNAIL, thumbnailImage)
-												.toImageUploadEvent();
+			.toImageUploadEvent();
 		String thumbnailUrl = webtoonClientService.uploadUrl(imageUploadEvent);
+
 		webtoonDomainService.validateDuplicateTitle(request.title());
 		webtoonDomainService.createWebtoon(memberId,
 			request.toWebtoonInfo(thumbnailUrl),

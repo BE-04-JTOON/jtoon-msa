@@ -1,11 +1,7 @@
 package shop.jtoon.webtoon.application;
 
-import static shop.jtoon.common.ImageType.*;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +10,6 @@ import shop.jtoon.common.ImageType;
 import shop.jtoon.dto.ImageUploadEvent;
 import shop.jtoon.dto.UploadImageDto;
 import shop.jtoon.service.S3Service;
-import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.CreateWebtoonReq;
 
 @Service

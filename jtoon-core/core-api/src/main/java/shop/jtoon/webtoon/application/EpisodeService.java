@@ -21,6 +21,7 @@ import shop.jtoon.webtoon.entity.Webtoon;
 import shop.jtoon.webtoon.presentation.WebtoonImageUploadEventListener;
 import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.GetEpisodesReq;
+import shop.jtoon.webtoon.request.MultiImagesReq;
 import shop.jtoon.webtoon.response.EpisodeInfoRes;
 import shop.jtoon.webtoon.response.EpisodeItemRes;
 import shop.jtoon.webtoon.service.EpisodeDomainService;
@@ -36,20 +37,19 @@ public class EpisodeService {
 	public void createEpisode(
 		Long memberId,
 		Long webtoonId,
-		List<MultipartFile> mainImages,
+		MultiImagesReq mainImages,
 		MultipartFile thumbnailImage,
 		CreateEpisodeReq request
 	) {
 		Webtoon webtoon = episodeDomainService.readWebtoon(webtoonId, memberId, request.no());
 
 		MultiImageEvent mainUploadEvents = MultiImageEvent.builder()
-			.imageUploadEvents(mainImages.stream()
-				.map(mainImage -> request.toUploadImageDto(EPISODE_MAIN, webtoon.getTitle(), mainImage).toImageUploadEvent())
-				.toList())
+			.imageUploadEvents(mainImages.toMultiImageEvent(request, webtoon.getTitle()))
 			.build();
 		List<String> mainUrls = mainUploadEvents.imageUploadEvents().stream()
-			.map(mainUploadEvent ->  webtoonClientService.uploadUrl(mainUploadEvent))
+			.map(webtoonClientService::uploadUrl)
 			.toList();
+
 		ImageUploadEvent thumbnailUploadEvent = request.toUploadImageDto(
 			EPISODE_THUMBNAIL,
 			webtoon.getTitle(),
