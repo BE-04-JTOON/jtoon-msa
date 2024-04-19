@@ -78,38 +78,38 @@
 <br><br>
 
 ## 🗂️ 프로젝트 구조
+![img.png](img/img.png)
 
-해당 구조는 우아한 기술 블로그에서 권용근님의 [멀티 모듈 설계 이야기](https://techblog.woowahan.com/2637/)를 참고 하였습니다.
-- [module-application](https://github.com/prgrms-be-devcourse/BE-04-JTOON/tree/develop/module-application)
-- [module-core](https://github.com/prgrms-be-devcourse/BE-04-JTOON/tree/develop/module-core)
-- [module-domain](https://github.com/prgrms-be-devcourse/BE-04-JTOON/tree/develop/module-domain)
-- [module-internal](https://github.com/prgrms-be-devcourse/BE-04-JTOON/tree/develop/module-internal)
+- [jtoon-core](./jtoon-core)
+- [jtoon-db](./jtoon-db)
+- [jtoon-internal](./jtoon-internal)
+- [jtoon-support](./jtoon-support)
+- [jtoon-system](./jtoon-system)
 
 ```.
 ├─ ...
-├─ module-application
-│   └── app-api
+├─ jtoon-core
+│   └── core-api
 │       └── src.main.java.shop.jtoon
 │          ├── global
 │          ├── member
 │          ├── payment
 │          ├── security
 │          └── webtoon
+│   └── core-domain
+│       └── src.main.java.shop.jtoon
+│          ├── global
+│          ├── config
+│          ├── login
+│          ├── member
+│          ├── payment
+│          ├── util
+│          └── webtoon
 │
-├── module-core
-│   └── src.main.java.shop.jtoon
-│       ├── util
-│       ├── type
-│       └── exception
-│
-├── module-domain
-│   ├── domain-member
-│   ├── domain-payment
-│   ├── domain-webtoon
-│   ├── domain-jpa
-│   └── domain-redis
-│
-├── module-internal
+├── jtoon-db
+│   └── db-redis
+|
+├── jtoon-internal
 │   └── core-web
 │       ├── security
 │       ├── annotation
@@ -118,6 +118,16 @@
 │   ├── iamport-client
 │   ├── s3-client
 │   └── smtp-client
+|
+├── jtoon-support
+│   └── logging
+│   └── monitoring
+|
+├── module-system
+│   └── src.main.java.shop.jtoon
+│       ├── util
+│       ├── type
+│       └── exception
 │
 └── settings.gradle
 ```
