@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import shop.jtoon.dto.ImageUploadEvent;
-import shop.jtoon.dto.UploadImageDto;
 import shop.jtoon.util.S3Manager;
 
 @Service
@@ -17,12 +16,8 @@ public class S3Service {
 		return s3Manager.uploadUrl(key);
 	}
 
-	public String uploadImage(UploadImageDto dto) {
-		return s3Manager.uploadImage(dto.toKey(), dto.image());
-	}
-
 	public String uploadImage(ImageUploadEvent imageUpload) {
-		return s3Manager.uploadImage(imageUpload.key(), imageUpload.multipartFile());
+		return s3Manager.uploadImage(imageUpload.key(), imageUpload.data());
 	}
 
 	public void deleteImage(String imageUrl) {

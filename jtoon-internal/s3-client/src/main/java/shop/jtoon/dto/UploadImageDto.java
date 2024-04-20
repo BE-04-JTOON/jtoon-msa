@@ -1,10 +1,14 @@
 package shop.jtoon.dto;
 
+import java.io.IOException;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Builder;
 import shop.jtoon.common.FileName;
 import shop.jtoon.common.ImageType;
+import shop.jtoon.exception.NotFoundException;
+import shop.jtoon.type.ErrorStatus;
 
 @Builder
 public record UploadImageDto(
@@ -19,9 +23,13 @@ public record UploadImageDto(
 	}
 
 	public ImageUploadEvent toImageUploadEvent() {
-		return ImageUploadEvent.builder()
-			.key(toKey())
-			.multipartFile(image)
-			.build();
+		try {
+			return ImageUploadEvent.builder()
+				.key(toKey())
+				.data(image.getBytes())
+				.build();
+		} catch (IOException exception) {
+			throw new NotFoundException(ErrorStatus.DATA_NOT_FOUND);
+		}
 	}
 }

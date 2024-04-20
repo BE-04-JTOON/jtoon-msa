@@ -1,7 +1,6 @@
 package shop.jtoon.webtoon.application;
 
 import static shop.jtoon.common.ImageType.*;
-import static shop.jtoon.type.ErrorStatus.*;
 
 import java.util.List;
 
@@ -10,15 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-
 import shop.jtoon.dto.ImageUploadEvent;
 import shop.jtoon.dto.MultiImageEvent;
-import shop.jtoon.exception.InvalidRequestException;
-
 import shop.jtoon.webtoon.domain.EpisodeMainInfo;
 import shop.jtoon.webtoon.domain.EpisodeSchema;
 import shop.jtoon.webtoon.entity.Webtoon;
-import shop.jtoon.webtoon.presentation.WebtoonImageUploadEventListener;
 import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.GetEpisodesReq;
 import shop.jtoon.webtoon.request.MultiImagesReq;
@@ -47,7 +42,7 @@ public class EpisodeService {
 			.imageUploadEvents(mainImages.toMultiImageEvent(request, webtoon.getTitle()))
 			.build();
 		List<String> mainUrls = mainUploadEvents.imageUploadEvents().stream()
-			.map(webtoonClientService::uploadUrl)
+			.map(webtoonClientService::parseUrl)
 			.toList();
 
 		ImageUploadEvent thumbnailUploadEvent = request.toUploadImageDto(

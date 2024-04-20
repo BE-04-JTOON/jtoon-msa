@@ -30,7 +30,7 @@ public class WebtoonService {
 	public void createWebtoon(Long memberId, MultipartFile thumbnailImage, CreateWebtoonReq request) {
 		ImageUploadEvent imageUploadEvent = request.toUploadImageDto(WEBTOON_THUMBNAIL, thumbnailImage)
 			.toImageUploadEvent();
-		String thumbnailUrl = webtoonClientService.uploadUrl(imageUploadEvent);
+		String thumbnailUrl = webtoonClientService.parseUrl(imageUploadEvent);
 
 		webtoonDomainService.validateDuplicateTitle(request.title());
 		webtoonDomainService.createWebtoon(memberId,
