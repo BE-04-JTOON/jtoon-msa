@@ -28,15 +28,13 @@ public class S3Manager {
 		return CLOUD_FRONT_URL + key;
 	}
 
-	public String uploadImage(String key, byte[] file) {
+	public void uploadImage(String key, byte[] file) {
 			s3Template.upload(
 				BUCKET,
 				key,
 				new ByteArrayInputStream(file),
 				ObjectMetadata.builder().contentType("image/png").build()
 			);
-
-			return CLOUD_FRONT_URL + key;
 	}
 
 	public void delete(String objectUrl) {

@@ -3,7 +3,7 @@ package shop.jtoon.dto;
 import lombok.Builder;
 
 @Builder
-public record ImageUploadEvent(
+public record ImageUpload(
 	String key,
 	byte[] data
 ) {

@@ -7,16 +7,15 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Builder;
-import shop.jtoon.dto.ImageUploadEvent;
 
 @Builder
 public record MultiImagesReq(
 	List<MultipartFile> mainImages
 ) {
 
-	public List<ImageUploadEvent> toMultiImageEvent(CreateEpisodeReq request, String webtoonTitle) {
+	public List<ImageEvent> toMultiImageEvent(CreateEpisodeReq request, String webtoonTitle) {
 		return mainImages.stream()
-			.map(mainImage -> request.toUploadImageDto(EPISODE_MAIN, webtoonTitle, mainImage).toImageUploadEvent())
+			.map(mainImage -> request.toUploadImageDto(EPISODE_MAIN, webtoonTitle, mainImage).toImageEvent())
 			.toList();
 	}
 }

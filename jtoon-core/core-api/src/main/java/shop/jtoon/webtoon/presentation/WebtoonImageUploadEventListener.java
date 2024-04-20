@@ -3,10 +3,10 @@ package shop.jtoon.webtoon.presentation;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.dto.ImageUploadEvent;
-import shop.jtoon.dto.MultiImageEvent;
+import shop.jtoon.dto.ImageUpload;
 import shop.jtoon.global.util.AsyncEventListener;
 import shop.jtoon.webtoon.application.WebtoonClientService;
+import shop.jtoon.webtoon.request.MultiImageEvent;
 
 @Component
 @RequiredArgsConstructor
@@ -15,15 +15,14 @@ public class WebtoonImageUploadEventListener {
 	private final WebtoonClientService webtoonClientService;
 
 	@AsyncEventListener
-	public void uploadImage(ImageUploadEvent imageUploadEvent) {
-		webtoonClientService.upload(imageUploadEvent);
+	public void uploadImage(ImageUpload imageUpload) {
+		webtoonClientService.upload(imageUpload);
 	}
 
 	@AsyncEventListener
 	public void uploadMultiImages(MultiImageEvent multiImageEvent) {
-		multiImageEvent.imageUploadEvents().stream()
+		multiImageEvent.imageEvents().stream()
 			.parallel()
-			.forEach(webtoonClientService::upload);
+			.forEach(imageEvent -> webtoonClientService.upload(imageEvent.toImageUpload()));
 	}
-
 }

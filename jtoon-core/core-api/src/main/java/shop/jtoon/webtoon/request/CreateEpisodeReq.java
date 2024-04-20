@@ -11,11 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import shop.jtoon.common.FileName;
 import shop.jtoon.common.ImageType;
-import shop.jtoon.dto.ImageUploadEvent;
-import shop.jtoon.dto.UploadImageDto;
 import shop.jtoon.webtoon.domain.EpisodeSchema;
-import shop.jtoon.webtoon.entity.Episode;
-import shop.jtoon.webtoon.entity.Webtoon;
 
 @Builder
 public record CreateEpisodeReq(

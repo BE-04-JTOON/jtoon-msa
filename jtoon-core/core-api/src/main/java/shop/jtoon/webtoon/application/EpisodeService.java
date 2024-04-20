@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.dto.ImageUploadEvent;
-import shop.jtoon.dto.MultiImageEvent;
+import shop.jtoon.webtoon.request.MultiImageEvent;
 import shop.jtoon.webtoon.domain.EpisodeMainInfo;
 import shop.jtoon.webtoon.domain.EpisodeSchema;
 import shop.jtoon.webtoon.entity.Webtoon;
 import shop.jtoon.webtoon.request.CreateEpisodeReq;
 import shop.jtoon.webtoon.request.GetEpisodesReq;
+import shop.jtoon.webtoon.request.ImageEvent;
 import shop.jtoon.webtoon.request.MultiImagesReq;
 import shop.jtoon.webtoon.response.EpisodeInfoRes;
 import shop.jtoon.webtoon.response.EpisodeItemRes;
@@ -39,18 +39,18 @@ public class EpisodeService {
 		Webtoon webtoon = episodeDomainService.readWebtoon(webtoonId, memberId, request.no());
 
 		MultiImageEvent mainUploadEvents = MultiImageEvent.builder()
-			.imageUploadEvents(mainImages.toMultiImageEvent(request, webtoon.getTitle()))
+			.imageEvents(mainImages.toMultiImageEvent(request, webtoon.getTitle()))
 			.build();
-		List<String> mainUrls = mainUploadEvents.imageUploadEvents().stream()
-			.map(webtoonClientService::parseUrl)
+		List<String> mainUrls = mainUploadEvents.imageEvents().stream()
+			.map(imageEvent -> webtoonClientService.parseUrl(imageEvent.toImageUpload()))
 			.toList();
 
-		ImageUploadEvent thumbnailUploadEvent = request.toUploadImageDto(
+		ImageEvent thumbnailUploadEvent = request.toUploadImageDto(
 			EPISODE_THUMBNAIL,
 			webtoon.getTitle(),
 			thumbnailImage
-		).toImageUploadEvent();
-		String thumbnailUrl = webtoonClientService.upload(thumbnailUploadEvent);
+		).toImageEvent();
+		String thumbnailUrl = webtoonClientService.parseUrl(thumbnailUploadEvent.toImageUpload());
 
 		EpisodeSchema episode = request.toEpisodeSchema();
 		episodeDomainService.createEpisode(episode, webtoon, mainUrls, thumbnailUrl);

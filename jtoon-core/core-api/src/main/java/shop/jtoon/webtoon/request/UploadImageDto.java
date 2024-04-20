@@ -1,4 +1,4 @@
-package shop.jtoon.dto;
+package shop.jtoon.webtoon.request;
 
 import java.io.IOException;
 
@@ -22,9 +22,9 @@ public record UploadImageDto(
 		return imageType.getPath(webtoonTitle, fileName.getValue());
 	}
 
-	public ImageUploadEvent toImageUploadEvent() {
+	public ImageEvent toImageEvent() {
 		try {
-			return ImageUploadEvent.builder()
+			return ImageEvent.builder()
 				.key(toKey())
 				.data(image.getBytes())
 				.build();
