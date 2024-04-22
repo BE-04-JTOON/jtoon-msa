@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.event.domain.ImagePayload;
-import shop.jtoon.event.repository.EventWriter;
+import lombok.extern.slf4j.Slf4j;
 import shop.jtoon.member.entity.Member;
 import shop.jtoon.member.repository.MemberReader;
 import shop.jtoon.webtoon.domain.SearchWebtoon;
@@ -27,6 +26,7 @@ import shop.jtoon.webtoon.entity.enums.Genre;
 import shop.jtoon.webtoon.repository.WebtoonReader;
 import shop.jtoon.webtoon.repository.WebtoonWriter;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,14 +36,13 @@ public class WebtoonDomainService {
 	private final MemberReader memberReader;
 	private final WebtoonWriter webtoonWriter;
 	private final WebtoonReader webtoonReader;
-	private final EventWriter eventWriter;
 
 	public void validateDuplicateTitle(String title) {
 		webtoonManger.validationTitle(title);
 	}
 
 	@Transactional
-	public void createWebtoon(Long memberId, WebtoonInfo info, WebtoonGenres genres, WebtoonDayOfWeeks dayOfWeeks, ImagePayload imagePayload) {
+	public Long createWebtoon(Long memberId, WebtoonInfo info, WebtoonGenres genres, WebtoonDayOfWeeks dayOfWeeks) {
 		Member member = memberReader.read(memberId);
 
 		Webtoon webtoon = info.toWebtoonEntity(member);
@@ -51,7 +50,8 @@ public class WebtoonDomainService {
 		List<GenreWebtoon> genreWebtoons = genres.toGenreWebtoonEntity(webtoon);
 
 		webtoonWriter.createWebtoon(webtoon, dayOfWeekWebtoons, genreWebtoons);
-		eventWriter.write(imagePayload.toEvent());
+
+		return webtoon.getId();
 	}
 
 	public Map<DayOfWeek, List<WebtoonSchema>> readWebtoons(SearchWebtoon search) {
@@ -66,5 +66,10 @@ public class WebtoonDomainService {
 		List<Genre> genres = webtoonReader.readGenreOfWebtoon(webtoon);
 
 		return WebtoonDetail.of(webtoon, dayOfWeeks, genres);
+	}
+
+	@Transactional
+	public void updateWebtoonStatus(List<Long> webtoonIds) {
+		webtoonWriter.update(webtoonIds);
 	}
 }

@@ -31,6 +31,7 @@ public class Event extends BaseTimeEntity {
 	private EventStatus status;
 
 	@Type(JsonType.class)
+	@Column(columnDefinition = "json")
 	private ImagePayload payload;
 
 	@Builder

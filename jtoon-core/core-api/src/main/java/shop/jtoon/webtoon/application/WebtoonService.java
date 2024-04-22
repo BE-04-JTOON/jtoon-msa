@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import shop.jtoon.service.EventRedisService;
 import shop.jtoon.webtoon.domain.WebtoonDetail;
 import shop.jtoon.webtoon.entity.enums.DayOfWeek;
 import shop.jtoon.webtoon.request.CreateWebtoonReq;
@@ -24,6 +25,7 @@ public class WebtoonService {
 
 	private final WebtoonClientService webtoonClientService;
 	private final WebtoonDomainService webtoonDomainService;
+	private final EventRedisService eventRedisService;
 
 	public void createWebtoon(Long memberId, MultipartFile thumbnailImage, CreateWebtoonReq request) {
 		ImageEvent imageEvent = request.toUploadImageDto(WEBTOON_THUMBNAIL, thumbnailImage)
@@ -31,11 +33,11 @@ public class WebtoonService {
 		String thumbnailUrl = webtoonClientService.parseUrl(imageEvent.toImageUpload());
 
 		webtoonDomainService.validateDuplicateTitle(request.title());
-		webtoonDomainService.createWebtoon(memberId,
+		Long webtoonId = webtoonDomainService.createWebtoon(memberId,
 			request.toWebtoonInfo(thumbnailUrl),
 			request.toWebtoonGenres(),
-			request.toWebtoonDayOfWeeks(),
-			imageEvent.toImagePayload());
+			request.toWebtoonDayOfWeeks());
+		eventRedisService.publish(imageEvent.imagePublishData(webtoonId));
 	}
 
 	public Map<DayOfWeek, List<WebtoonItemRes>> getWebtoons(GetWebtoonsReq request) {

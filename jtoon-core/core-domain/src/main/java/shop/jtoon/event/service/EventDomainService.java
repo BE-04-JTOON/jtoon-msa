@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import shop.jtoon.event.domain.ImagePublish;
@@ -21,7 +22,8 @@ public class EventDomainService {
 		return ImagePublish.toImagePublishes(eventReader.readRecentEvent(now));
 	}
 
-	public void updateEvent(ImagePublish imagePublish) {
-		eventWriter.write(ImagePublish.toEvent(imagePublish));
+	@Transactional
+	public void update(List<ImagePublish> publishes) {
+		eventWriter.writeEvnets(publishes);
 	}
 }
