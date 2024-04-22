@@ -23,4 +23,8 @@ public class WebtoonWriter {
 		dayOfWeekWebtoonRepository.saveAll(dayOfWeekWebtoons);
 		genreWebtoonRepository.saveAll(genreWebtoons);
 	}
+
+	public void update(List<Long> webtoonIds) {
+		webtoonRepository.updateStatus(webtoonIds);
+	}
 }

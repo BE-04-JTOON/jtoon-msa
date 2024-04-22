@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import shop.jtoon.event.entity.EventStatus;
 import shop.jtoon.member.entity.QMember;
 import shop.jtoon.util.DynamicQuery;
 import shop.jtoon.webtoon.entity.DayOfWeekWebtoon;
@@ -26,6 +27,7 @@ public class WebtoonSearchRepository {
 			.join(QDayOfWeekWebtoon.dayOfWeekWebtoon.webtoon, QWebtoon.webtoon)
 			.join(QWebtoon.webtoon.author, QMember.member)
 			.where(
+				QWebtoon.webtoon.eventStatus.eq(EventStatus.OK),
 				DynamicQuery.generateEq(dayOfWeek, QDayOfWeekWebtoon.dayOfWeekWebtoon.dayOfWeek::eq),
 				DynamicQuery.generateEq(keyword, this::containsKeyword)
 			)

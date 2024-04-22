@@ -1,7 +1,6 @@
 package shop.jtoon.webtoon.service;
 
 import static java.util.stream.Collectors.*;
-import static shop.jtoon.type.ErrorStatus.*;
 
 import java.util.List;
 import java.util.Map;
@@ -10,15 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.exception.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import shop.jtoon.member.entity.Member;
 import shop.jtoon.member.repository.MemberReader;
 import shop.jtoon.webtoon.domain.SearchWebtoon;
 import shop.jtoon.webtoon.domain.WebtoonDayOfWeeks;
 import shop.jtoon.webtoon.domain.WebtoonDetail;
-import shop.jtoon.webtoon.domain.WebtoonSchema;
 import shop.jtoon.webtoon.domain.WebtoonGenres;
 import shop.jtoon.webtoon.domain.WebtoonInfo;
+import shop.jtoon.webtoon.domain.WebtoonSchema;
 import shop.jtoon.webtoon.entity.DayOfWeekWebtoon;
 import shop.jtoon.webtoon.entity.GenreWebtoon;
 import shop.jtoon.webtoon.entity.Webtoon;
@@ -27,6 +26,7 @@ import shop.jtoon.webtoon.entity.enums.Genre;
 import shop.jtoon.webtoon.repository.WebtoonReader;
 import shop.jtoon.webtoon.repository.WebtoonWriter;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class WebtoonDomainService {
 	}
 
 	@Transactional
-	public void createWebtoon(Long memberId, WebtoonInfo info, WebtoonGenres genres, WebtoonDayOfWeeks dayOfWeeks) {
+	public Long createWebtoon(Long memberId, WebtoonInfo info, WebtoonGenres genres, WebtoonDayOfWeeks dayOfWeeks) {
 		Member member = memberReader.read(memberId);
 
 		Webtoon webtoon = info.toWebtoonEntity(member);
@@ -50,6 +50,8 @@ public class WebtoonDomainService {
 		List<GenreWebtoon> genreWebtoons = genres.toGenreWebtoonEntity(webtoon);
 
 		webtoonWriter.createWebtoon(webtoon, dayOfWeekWebtoons, genreWebtoons);
+
+		return webtoon.getId();
 	}
 
 	public Map<DayOfWeek, List<WebtoonSchema>> readWebtoons(SearchWebtoon search) {
@@ -64,5 +66,10 @@ public class WebtoonDomainService {
 		List<Genre> genres = webtoonReader.readGenreOfWebtoon(webtoon);
 
 		return WebtoonDetail.of(webtoon, dayOfWeeks, genres);
+	}
+
+	@Transactional
+	public void updateWebtoonStatus(List<Long> webtoonIds) {
+		webtoonWriter.update(webtoonIds);
 	}
 }

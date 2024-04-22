@@ -5,6 +5,8 @@ import static shop.jtoon.type.ErrorStatus.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import shop.jtoon.event.entity.EventStatus;
 import shop.jtoon.exception.InvalidRequestException;
 import shop.jtoon.common.BaseTimeEntity;
 import shop.jtoon.member.entity.Member;
@@ -54,6 +57,10 @@ public class Webtoon extends BaseTimeEntity {
 	@JoinColumn(name = "author_id", nullable = false)
 	private Member author;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private EventStatus eventStatus;
+
 	@Builder
 	private Webtoon(
 		String title,
@@ -69,6 +76,7 @@ public class Webtoon extends BaseTimeEntity {
 		this.thumbnailUrl = requireNonNull(thumbnailUrl, WEBTOON_THUMBNAIL_URL_IS_NULL.getMessage());
 		this.cookieCount = validateCookieCount(cookieCount);
 		this.author = requireNonNull(author, WEBTOON_AUTHOR_IS_NULL.getMessage());
+		this.eventStatus = EventStatus.READY;
 	}
 
 	public void validateAuthor(Long memberId) {

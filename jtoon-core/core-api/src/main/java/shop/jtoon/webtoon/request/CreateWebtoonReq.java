@@ -1,6 +1,5 @@
 package shop.jtoon.webtoon.request;
 
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -11,13 +10,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import shop.jtoon.common.FileName;
 import shop.jtoon.common.ImageType;
-import shop.jtoon.dto.UploadImageDto;
 import shop.jtoon.webtoon.domain.WebtoonDayOfWeeks;
 import shop.jtoon.webtoon.domain.WebtoonGenres;
 import shop.jtoon.webtoon.domain.WebtoonInfo;
-import shop.jtoon.webtoon.entity.DayOfWeekWebtoon;
-import shop.jtoon.webtoon.entity.GenreWebtoon;
-import shop.jtoon.webtoon.entity.Webtoon;
 import shop.jtoon.webtoon.entity.enums.AgeLimit;
 import shop.jtoon.webtoon.entity.enums.DayOfWeek;
 import shop.jtoon.webtoon.entity.enums.Genre;

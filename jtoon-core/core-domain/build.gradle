@@ -26,6 +26,12 @@ dependencies {
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    // Hibernate type parser
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.3.1'
+
+    // JSON
+    implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations:2.16.1'
+
     // H2
     implementation 'com.h2database:h2'
 

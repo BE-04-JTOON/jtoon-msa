@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
+import shop.jtoon.event.entity.EventStatus;
 import shop.jtoon.exception.NotFoundException;
 import shop.jtoon.webtoon.domain.SearchWebtoon;
 import shop.jtoon.webtoon.entity.DayOfWeekWebtoon;
@@ -28,7 +29,7 @@ public class WebtoonReader {
 	}
 
 	public Webtoon read(Long webtoonId) {
-		return webtoonRepository.findById(webtoonId).orElseThrow(() -> new NotFoundException(WEBTOON_NOT_FOUND));
+		return webtoonRepository.findByIdAndEventStatus(webtoonId, EventStatus.OK).orElseThrow(() -> new NotFoundException(WEBTOON_NOT_FOUND));
 	}
 
 	public List<String> readDayOfWebtoon(Webtoon webtoon) {

@@ -1,16 +1,13 @@
 package shop.jtoon.util;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
-import shop.jtoon.exception.InvalidRequestException;
-import shop.jtoon.type.ErrorStatus;
 
 @Component
 @RequiredArgsConstructor
@@ -31,19 +28,13 @@ public class S3Manager {
 		return CLOUD_FRONT_URL + key;
 	}
 
-	public String uploadImage(String key, MultipartFile file) {
-		try {
+	public void uploadImage(String key, byte[] file) {
 			s3Template.upload(
 				BUCKET,
 				key,
-				file.getInputStream(),
+				new ByteArrayInputStream(file),
 				ObjectMetadata.builder().contentType("image/png").build()
 			);
-
-			return CLOUD_FRONT_URL + key;
-		} catch (IOException e) {
-			throw new InvalidRequestException(ErrorStatus.S3_UPLOAD_FAIL);
-		}
 	}
 
 	public void delete(String objectUrl) {

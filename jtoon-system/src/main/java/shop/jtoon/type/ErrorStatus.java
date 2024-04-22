@@ -70,7 +70,7 @@ public enum ErrorStatus {
 	EPISODE_OPENED_AT_IS_NULL("회차 공개일자 값이 NULL 입니다."),
 
 	S3_UPLOAD_FAIL("S3 이미지 업로드에 실패했습니다."),
-	;
+	DATA_NOT_FOUND("데이터 찾기 실패");
 
 	private final String message;
 }
